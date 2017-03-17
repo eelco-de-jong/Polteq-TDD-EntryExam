@@ -22,4 +22,17 @@ public class Product {
         return price;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public String getProductPPU() {
+        String ppu = productPricePerUnit.toString();
+        return ppu;
+    }
+
+    public String getProductType() {
+        String ppt = productType.toString();
+        return ppt;
+    }
 }

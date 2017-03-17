@@ -58,6 +58,10 @@ public class WebShopTest {
         order.setClientName("Alpha");
         Product product = new Product("Water", "1,50", ProductType.LIQUID);
         order.addProduct(product);
+        Assert.assertEquals(product.getProductName(), "Water");
+        Assert.assertEquals(product.getProductPPU(), "1,50");
+        Assert.assertEquals(product.getProductType(), "LIQUID");
+        Assert.assertEquals(order.getProductByName(), "Water");
     }
 
 
