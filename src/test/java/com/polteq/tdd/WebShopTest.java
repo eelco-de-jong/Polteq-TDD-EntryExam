@@ -56,12 +56,49 @@ public class WebShopTest {
     public void assertThatProductCanBeAddedToOrder() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Product product = new Product("Water", "1,50", ProductType.LIQUID);
+        Product product = new Product("Water", "1.50", ProductType.LIQUID, 1000);
         order.addProduct(product);
         Assert.assertEquals(product.getProductName(), "Water");
-        Assert.assertEquals(product.getProductPPU(), "1,50");
+        Assert.assertEquals(product.getProductPPU(), "1.50");
         Assert.assertEquals(product.getProductType(), "LIQUID");
-        Assert.assertEquals(order.getProductByName(), "Water");
+        Assert.assertEquals(order.getProductByName("Water").get(0), "Water");
+        Assert.assertEquals(order.getProductByName("Water").get(1), "1.50");
+        Assert.assertEquals(order.getProductByName("Water").get(2), "LIQUID");
+        Assert.assertEquals(order.getProductByName("Water").get(2), "1000");
+    }
+
+    @Test
+    public void assertThatMultipleProductsCanBeAddedToOrder() {
+        Order order = new Order();
+        order.setClientName("Alpha");
+        Product product_1 = new Product("Water", "1.20", ProductType.LIQUID, 200);
+        Product product_2 = new Product("Bricks", "15.10", ProductType.SOLID, 1500);
+        order.addProduct(product_1);
+        order.addProduct(product_2);
+        Assert.assertEquals(order.getProductByName("Water").get(0), "Water");
+        Assert.assertEquals(order.getProductByName("Water").get(1), "1.20");
+        Assert.assertEquals(order.getProductByName("Water").get(2), "LIQUID");
+        Assert.assertEquals(order.getProductByName("Water").get(3), "200");
+        Assert.assertEquals(order.getProductByName("Bricks").get(0), "Bricks");
+        Assert.assertEquals(order.getProductByName("Bricks").get(1), "15.10");
+        Assert.assertEquals(order.getProductByName("Bricks").get(2), "SOLID");
+        Assert.assertEquals(order.getProductByName("Bricks").get(2), "1500");
+    }
+
+    @Test
+    public void assertThatFullAmountOfOrderIsCalculatedCorrectly() {
+        Order order = new Order();
+        order.setClientName("Alpha");
+        Product product_1 = new Product("Water", "1.20", ProductType.LIQUID, 200);
+        Product product_2 = new Product("Bricks", "15.10", ProductType.SOLID, 1500);
+        order.addProduct(product_1);
+        order.addProduct(product_2);
+        /**
+         *  Calculation:
+         *  Water: 1.20 * (200 / 0.75) = 320
+         *  Bricks: 15.10 * (1500 / 100) = 226.50
+         */
+        Assert.assertEquals(order.calculateOrderAmountForClientName("Alpha"), "226,50");
     }
 
 

@@ -51,11 +51,25 @@ public class Order {
         productDetails.add(product.getProductName());
         productDetails.add(product.getProductPPU());
         productDetails.add(product.getProductType());
+        productDetails.add(String.valueOf(product.getProductAmount()));
         orderList.add(productDetails);
     }
 
-    public String getProductByName() {
+    public ArrayList<String> getProductByName(String name) {
         //Loop through list of lists
+        for (ArrayList<String> list : orderList) {
+            if (list.get(0) == name) {
+                return list;
+            }
+        }
         return null;
+    }
+
+    public String calculateOrderAmountForClientName(String name) {
+        for (ArrayList<String> list : orderList) {
+            for (String l : list) {
+                //TODO: Add code to calculate price per product and sum those amounts
+            }
+        }
     }
 }

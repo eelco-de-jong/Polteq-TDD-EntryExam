@@ -7,14 +7,16 @@ import java.math.BigDecimal;
  */
 public class Product {
 
-    public String productName;
-    public BigDecimal productPricePerUnit;
-    public ProductType productType;
+    private String productName;
+    private BigDecimal productPricePerUnit;
+    private ProductType productType;
+    private int productAmount;
 
-    Product(String name, String ppu, ProductType type) {
+    Product(String name, String ppu, ProductType type, int amount) {
         productName = name;
         productPricePerUnit = getProductPricePerUnit(ppu);
         productType = type;
+        productAmount = amount;
     }
 
     private BigDecimal getProductPricePerUnit(String ppu) {
@@ -34,5 +36,9 @@ public class Product {
     public String getProductType() {
         String ppt = productType.toString();
         return ppt;
+    }
+
+    public int getProductAmount() {
+        return productAmount;
     }
 }
