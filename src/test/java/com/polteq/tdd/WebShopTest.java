@@ -64,7 +64,7 @@ public class WebShopTest {
         Assert.assertEquals(order.getProductByName("Water").get(0), "Water");
         Assert.assertEquals(order.getProductByName("Water").get(1), "1.50");
         Assert.assertEquals(order.getProductByName("Water").get(2), "LIQUID");
-        Assert.assertEquals(order.getProductByName("Water").get(2), "1000");
+        Assert.assertEquals(order.getProductByName("Water").get(3), "1000");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class WebShopTest {
         Assert.assertEquals(order.getProductByName("Bricks").get(0), "Bricks");
         Assert.assertEquals(order.getProductByName("Bricks").get(1), "15.10");
         Assert.assertEquals(order.getProductByName("Bricks").get(2), "SOLID");
-        Assert.assertEquals(order.getProductByName("Bricks").get(2), "1500");
+        Assert.assertEquals(order.getProductByName("Bricks").get(3), "1500");
     }
 
     @Test
@@ -91,14 +91,24 @@ public class WebShopTest {
         order.setClientName("Alpha");
         Product product_1 = new Product("Water", "1.20", ProductType.LIQUID, 200);
         Product product_2 = new Product("Bricks", "15.10", ProductType.SOLID, 1500);
+        Product product_3 = new Product("Oil", "20.00", ProductType.LIQUID, 500);
+        Product product_4 = new Product("Rocks", "0.50", ProductType.SOLID, 5000);
         order.addProduct(product_1);
         order.addProduct(product_2);
+        order.addProduct(product_3);
+        order.addProduct(product_4);
+
         /**
          *  Calculation:
-         *  Water: 1.20 * (200 / 0.75) = 320
-         *  Bricks: 15.10 * (1500 / 100) = 226.50
+         *  Water   : 1.20 * (200 / 0.75) = 320
+         *  Bricks  : 15.10 * (1500 / 100) = 226.50
+         *  Oil     : 20.00 * (500 / 0.75) = 13333.33
+         *  Rocks   : 0.50 * (5000 / 100) = 25
+         *  --------------------------------------------
+         *  Total   : 13904.85
          */
-        Assert.assertEquals(order.calculateOrderAmountForClientName("Alpha"), "226,50");
+        
+        Assert.assertEquals("13904.85", order.calculateOrderAmountForClientName("Alpha").toString());
     }
 
 

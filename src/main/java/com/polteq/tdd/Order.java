@@ -1,5 +1,7 @@
 package com.polteq.tdd;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -12,6 +14,8 @@ public class Order {
     public String clientName;
     public OrderStatus orderStatus;
     public ArrayList<ArrayList<String>> orderList = new ArrayList<ArrayList<String>>();
+    private BigDecimal bdLiquidBase = new BigDecimal("0.75");
+    private BigDecimal bdSolidBase = new BigDecimal("100");
 
     Order() {
         orderId = setOrderId();
@@ -65,11 +69,28 @@ public class Order {
         return null;
     }
 
-    public String calculateOrderAmountForClientName(String name) {
+    public BigDecimal calculateOrderAmountForClientName(String name) {
+        BigDecimal orderAmount = new BigDecimal("0");
         for (ArrayList<String> list : orderList) {
-            for (String l : list) {
-                //TODO: Add code to calculate price per product and sum those amounts
+            BigDecimal bdPPU = new BigDecimal(list.get(1));
+            BigDecimal bdProductAmount = new BigDecimal(list.get(3));
+            BigDecimal bdDivisionValue;
+            if (list.get(2) == ProductType.LIQUID.toString()) {
+                bdDivisionValue = new BigDecimal("0.75");
+            } else {
+                bdDivisionValue = new BigDecimal("100");
             }
+            BigDecimal productCalculatedAmount = calculateProductAmount(bdPPU, bdProductAmount, bdDivisionValue);
+            orderAmount = orderAmount.add(productCalculatedAmount);
+            orderAmount = orderAmount.setScale(2, RoundingMode.CEILING);
         }
+        return orderAmount;
+
+    }
+
+    private BigDecimal calculateProductAmount(BigDecimal bdPPU, BigDecimal bdProductAmount, BigDecimal bdDivisionValue) {
+        BigDecimal x = bdProductAmount.divide(bdDivisionValue, 4, RoundingMode.HALF_EVEN);
+        BigDecimal bdProductPrice = bdPPU.multiply(x);
+        return bdProductPrice;
     }
 }
