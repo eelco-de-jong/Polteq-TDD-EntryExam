@@ -4,10 +4,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by jongd on 9-3-2017.
+ * Created by Eelco de Jong on 9-3-2017.
  */
 public class WebShopTest {
 
+    /**
+     * Added unique order ID functionality to mimic creating unique order ids by SQL database
+     * This functionality and its test can be removed as soon as a database is implemented
+     */
     @Test
     public void assertThatUniqueOrderCanBeCreated() {
         Order order_1 = new Order();
@@ -19,7 +23,7 @@ public class WebShopTest {
     public void assertThatOrderCanBeCreatedByClientName() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Assert.assertEquals(order.getClientName(), "Alpha");
+        Assert.assertEquals("Alpha", order.getClientName());
     }
 
     @Test
@@ -29,8 +33,8 @@ public class WebShopTest {
         order_1.setClientName("Alpha");
         order_2.setClientName("Alpha");
         Assert.assertNotEquals(order_1.getOrderId(), order_2.getOrderId());
-        Assert.assertEquals(order_1.getClientName(), "Alpha");
-        Assert.assertEquals(order_2.getClientName(), "Alpha");
+        Assert.assertEquals("Alpha", order_1.getClientName());
+        Assert.assertEquals("Alpha", order_2.getClientName());
     }
 
     @Test
@@ -39,67 +43,82 @@ public class WebShopTest {
         order.setClientName("Alpha");
         order.setOrderStatus(OrderStatus.COMPLETED);
         order.setClientName("Beta");
-        Assert.assertEquals(order.getClientName(),"Alpha");
+        Assert.assertEquals("Alpha", order.getClientName());
     }
 
     @Test
     public void assertThatClientNameCanBeChangedOnANewOrder() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Assert.assertEquals(order.getOrderStatus(), OrderStatus.NEW);
-        Assert.assertEquals(order.getClientName(), "Alpha");
+        Assert.assertEquals(OrderStatus.NEW, order.getOrderStatus());
+        Assert.assertEquals("Alpha", order.getClientName());
         order.setClientName("Beta");
-        Assert.assertEquals(order.getClientName(),"Beta");
+        Assert.assertEquals("Beta", order.getClientName());
     }
 
     @Test
-    public void assertThatProductCanBeAddedToOrder() {
+    public void assertThatLiquidProductCanBeAddedToOrder() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Product product = new Product("Water", "1.50", ProductType.LIQUID, 1000);
+        LiquidProduct product = new LiquidProduct("Water", "1.50", 1000);
         order.addProduct(product);
-        Assert.assertEquals(product.getProductName(), "Water");
-        Assert.assertEquals(product.getProductPPU(), "1.50");
-        Assert.assertEquals(product.getProductType(), "LIQUID");
-        Assert.assertEquals(order.getProductByName("Water").get(0), "Water");
-        Assert.assertEquals(order.getProductByName("Water").get(1), "1.50");
-        Assert.assertEquals(order.getProductByName("Water").get(2), "LIQUID");
-        Assert.assertEquals(order.getProductByName("Water").get(3), "1000");
+        Assert.assertEquals("Water", product.getProductName());
+        Assert.assertEquals("1.50", product.getProductPPU());
+        Assert.assertEquals(1000, product.getProductAmount());
+        Assert.assertEquals("Water", order.getProductByName("Water").get(0));
+        Assert.assertEquals("1.50", order.getProductByName("Water").get(1));
+        Assert.assertEquals("LIQUID", order.getProductByName("Water").get(2));
+        Assert.assertEquals("1000", order.getProductByName("Water").get(3));
+        Assert.assertEquals("0.75", order.getProductByName("Water").get(4));
+    }
+
+    @Test
+    public void assertThatSolidProductCanBeAddedToOrder() {
+        Order order = new Order();
+        SolidProduct product = new SolidProduct("Bricks", "13.00", 50);
+        order.addProduct(product);
+        Assert.assertEquals("Bricks",order.getProductByName("Bricks").get(0));
+        Assert.assertEquals("13.00", order.getProductByName("Bricks").get(1));
+        Assert.assertEquals("SOLID", order.getProductByName("Bricks").get(2));
+        Assert.assertEquals("50", order.getProductByName("Bricks").get(3));
+        Assert.assertEquals("100", order.getProductByName("Bricks").get(4));
     }
 
     @Test
     public void assertThatMultipleProductsCanBeAddedToOrder() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Product product_1 = new Product("Water", "1.20", ProductType.LIQUID, 200);
-        Product product_2 = new Product("Bricks", "15.10", ProductType.SOLID, 1500);
+        LiquidProduct product_1 = new LiquidProduct("Water", "1.20", 200);
+        SolidProduct product_2 = new SolidProduct("Bricks", "15.10", 1500);
         order.addProduct(product_1);
         order.addProduct(product_2);
-        Assert.assertEquals(order.getProductByName("Water").get(0), "Water");
-        Assert.assertEquals(order.getProductByName("Water").get(1), "1.20");
-        Assert.assertEquals(order.getProductByName("Water").get(2), "LIQUID");
-        Assert.assertEquals(order.getProductByName("Water").get(3), "200");
-        Assert.assertEquals(order.getProductByName("Bricks").get(0), "Bricks");
-        Assert.assertEquals(order.getProductByName("Bricks").get(1), "15.10");
-        Assert.assertEquals(order.getProductByName("Bricks").get(2), "SOLID");
-        Assert.assertEquals(order.getProductByName("Bricks").get(3), "1500");
+        Assert.assertEquals("Water", order.getProductByName("Water").get(0));
+        Assert.assertEquals("1.20", order.getProductByName("Water").get(1));
+        Assert.assertEquals("LIQUID", order.getProductByName("Water").get(2));
+        Assert.assertEquals("200", order.getProductByName("Water").get(3));
+        Assert.assertEquals("0.75", order.getProductByName("Water").get(4));
+        Assert.assertEquals("Bricks", order.getProductByName("Bricks").get(0));
+        Assert.assertEquals("15.10", order.getProductByName("Bricks").get(1));
+        Assert.assertEquals("SOLID", order.getProductByName("Bricks").get(2));
+        Assert.assertEquals("1500", order.getProductByName("Bricks").get(3));
+        Assert.assertEquals("100", order.getProductByName("Bricks").get(4));
     }
 
     @Test
     public void assertThatFullAmountOfOrderIsCalculatedCorrectly() {
         Order order = new Order();
         order.setClientName("Alpha");
-        Product product_1 = new Product("Water", "1.20", ProductType.LIQUID, 200);
-        Product product_2 = new Product("Bricks", "15.10", ProductType.SOLID, 1500);
-        Product product_3 = new Product("Oil", "20.00", ProductType.LIQUID, 500);
-        Product product_4 = new Product("Rocks", "0.50", ProductType.SOLID, 5000);
+        LiquidProduct product_1 = new LiquidProduct("Water", "1.20", 200);
+        SolidProduct product_2 = new SolidProduct("Bricks", "15.10", 1500);
+        LiquidProduct product_3 = new LiquidProduct("Oil", "20.00", 500);
+        SolidProduct product_4 = new SolidProduct("Rocks", "0.50", 5000);
         order.addProduct(product_1);
         order.addProduct(product_2);
         order.addProduct(product_3);
         order.addProduct(product_4);
 
         /**
-         *  Calculation:
+         *  MANUAL CALCULATION OF TOTAL ORDER AMOUNT:
          *  Water   : 1.20 * (200 / 0.75) = 320
          *  Bricks  : 15.10 * (1500 / 100) = 226.50
          *  Oil     : 20.00 * (500 / 0.75) = 13333.33
@@ -107,9 +126,8 @@ public class WebShopTest {
          *  --------------------------------------------
          *  Total   : 13904.85
          */
-        
+
         Assert.assertEquals("13904.85", order.calculateOrderAmountForClientName("Alpha").toString());
     }
-
 
 }
